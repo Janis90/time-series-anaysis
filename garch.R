@@ -16,7 +16,12 @@ dax_df$Schlusskurs <- as.numeric(dax_df$Schlusskurs)
 # Plot Time Series 
 plot.ts(dax_df$Schlusskurs, main="Daily Dax 30 Closing Prices", ylab="Closing Price")
 
-# Calculate and log returns
+# Dickey-Fuller test
+# Specify lag?
+adf.test(dax_df$Schlusskurs, alternative="stationary", k=0)
+adf.test(dax_df$Schlusskurs, alternative="explosive", k=0)
+
+# Calculate log returns
 returns.log <- diff(log(dax_df$Schlusskurs))
 plot.ts(returns.log, main="Daily Dax 30 Log Returns", ylab="Log Returns")
 
