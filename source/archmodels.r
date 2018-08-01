@@ -7,7 +7,7 @@ n <- 10000
 a0 <- 0.5
 a1 <- 0.3
 a2 <- 0.1
-a3 <- 0.2
+b3 <- 0.2
 
 X1 <- rnorm(n)
 eta <- rnorm(n)
@@ -27,7 +27,7 @@ X2 <- garchSim(spec = garchSpec(model = list(omega = a0, alpha = c(a1, a2), beta
 plot(X2, type = "l")
 pacf(X2^2)
 
-# Model ARCH(3) process (now with the help of the library)
-X3 <- garchSim(spec = garchSpec(model = list(omega = a0, alpha = c(a1, a2, a3), beta = 0)), n = n)
+# Model GARCH(1,1) process
+X3 <- garchSim(spec = garchSpec(model = list(omega = a0, alpha = c(a1), beta = c(b1))), n = n)
 plot(X3, type = "l")
 pacf(X3^2)
