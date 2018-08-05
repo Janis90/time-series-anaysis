@@ -11,5 +11,7 @@ print(3*alpha^2 + 2*alpha*beta + beta^2 < 1)
 
 X.spec <- garchSpec(model = list(omega = omega, alpha = alpha, beta = beta), rseed = 42)
 X <- garchSim (spec = X.spec, n = N)
+plot(X[0:2000], type = "l")
+pacf(X^2, lag.max = 30)
 
 source("modelFit.r")
