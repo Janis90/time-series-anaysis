@@ -14,11 +14,14 @@ dax_df$Schlusskurs <- gsub("[,]", ".", dax_df$Schlusskurs)
 dax_df$Schlusskurs <- as.numeric(dax_df$Schlusskurs) 
 
 # Plot Time Series 
+
 plot.ts(dax_df$Schlusskurs, main="Daily Dax 30 Closing Prices", ylab="Closing Price")
+summary(dax_df$Schlusskurs)
 
 # Dickey-Fuller test
-# Specify lag?
+# Specify lag muss angegeben werden
 adf.test(dax_df$Schlusskurs, alternative="stationary", k=0)
+# If a root of the process's characteristic equation is larger than 1, then it is called an explosive process
 adf.test(dax_df$Schlusskurs, alternative="explosive", k=0)
 
 # Calculate log returns
@@ -38,6 +41,7 @@ returns.pacf <- partialAutocorrelations(returns.log)
 
 plot(returns.acf, data = returns.log)
 plot(returns.pacf, data = returns.log)
+
 
 ###
 # There are two bounds plotted on the graph. The straight red line represents
@@ -68,12 +72,19 @@ Box.Ljung.Test(fit$residuals, lag = 20)
 # Ljung–Box test whether data suffers from ARCH effects
 Box.Ljung.Test(fit$residuals^2, lag = 20)
 
+#par(mfrow=c(1,2))
+acf(fit$residuals, main="ACF Resulduals", ylab="Residuals")
+acf(fit$residuals^2, main="ACF Resulduals^2", ylab="Residuals^2")
+#par(mfrow=c(1,1))
+
 ###
 # ---> p-value < 0.05 => Suffers from Arch effect -> GARCH model is applicable
 ###
 
 ### ARIMA-GARCH###
 # GARCH(1,1) based on ARIMA(0,0,0)
+# In that case, the GARCH (p, q) model (where p is the order of the GARCH terms {\displaystyle ~\sigma ^{2}} ~\sigma ^{2} and q is the order of the ARCH terms {\displaystyle ~\epsilon ^{2}} ~\epsilon ^{2} )
+# TODO: garch parameter möglichst groß wählen -> etsten was am besten passt
 garch.spec <- ugarchspec( variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
                           mean.model     = list(armaOrder = c(0, 0)))
 (garch.fit <- ugarchfit(spec = garch.spec, data = returns.log))
@@ -88,6 +99,12 @@ garch.spec <- ugarchspec( variance.model = list(model = "sGARCH", garchOrder = c
 
 plot(garch.fit)
 
+# Auch analysieren + 1-2 enthalten informatioenen
+
 # Forecast 10 periods
 ugarchforecast(garch.fit, n.ahead = 10)
+
+plot(ugarchforecast(garch.fit, n.ahead = 10))
+
+# Sigma etc  (Varianz) analyisiern
 
